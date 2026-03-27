@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Claude Skills — Geotab</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #1a1a2e;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0071CE 0%, #005baa 100%);
+      color: white;
+      padding: 44px 48px 36px;
+    }
+    header h1 { font-size: 30px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    header p { font-size: 15px; opacity: 0.88; max-width: 620px; line-height: 1.55; }
+    .header-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ── Share bar ── */
+    .share-bar {
+      background: #fff;
+      border-bottom: 1px solid #e8edf3;
+      padding: 14px 48px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .share-bar-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0071CE;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .share-link-box {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 260px;
+      background: #f0f4ff;
+      border: 1px solid #c5daff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .share-link-text {
+      flex: 1;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-family: 'SF Mono', monospace;
+      color: #0047a3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      user-select: all;
+    }
+    .copy-btn {
+      background: #0071CE;
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .copy-btn:hover { background: #005baa; }
+    .copy-btn.copied { background: #1a8a4a; }
+    .open-btn {
+      background: white;
+      color: #0071CE;
+      border: 1.5px solid #0071CE;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .open-btn:hover { background: #0071CE; color: white; }
+
+    /* ── Main layout ── */
+    main { max-width: 1040px; margin: 0 auto; padding: 44px 24px 80px; }
+
+    /* ── Category sections ── */
+    .category { margin-bottom: 52px; }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #e8edf3;
+    }
+    .category-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .cat-support .category-icon { background: #fff3e0; }
+    .cat-auth .category-icon { background: #e8f5e9; }
+    .cat-vitality .category-icon { background: #e3f2fd; }
+    .category-title { font-size: 20px; font-weight: 700; color: #0d1b2a; }
+    .category-count {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .cat-support .category-count { background: #fff3e0; color: #e65100; }
+    .cat-auth .category-count { background: #e8f5e9; color: #2e7d32; }
+    .cat-vitality .category-count { background: #e3f2fd; color: #0071CE; }
+
+    /* ── Skill cards ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 18px; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,113,206,0.12); transform: translateY(-1px); }
+    .cat-support .card { border-top: 3px solid #ff8c00; }
+    .cat-auth .card { border-top: 3px solid #2e7d32; }
+    .cat-vitality .card { border-top: 3px solid #0071CE; }
+
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #0d1b2a; }
+    .invoke {
+      font-size: 12px;
+      font-family: 'SF Mono', monospace;
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid;
+    }
+    .cat-support .invoke { background: #fff8f0; color: #c45d00; border-color: #ffd599; }
+    .cat-auth .invoke { background: #f0faf0; color: #2e7d32; border-color: #a5d6a7; }
+    .cat-vitality .invoke { background: #eef5ff; color: #0071CE; border-color: #c5daff; }
+
+    .desc { font-size: 13.5px; color: #555; line-height: 1.55; }
+    .when {
+      font-size: 12.5px;
+      color: #666;
+      background: #f8f9fc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      border-left: 3px solid #e0e7ff;
+    }
+    .when strong { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 3px; color: #0071CE; }
+    .example {
+      background: #1a1a2e;
+      color: #a8d8ff;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 12px;
+      font-family: 'SF Mono', monospace;
+      line-height: 1.55;
+    }
+    .example .label { color: #6c9fff; font-size: 10.5px; margin-bottom: 4px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.4px; }
+
+    /* ── Quick ref table ── */
+    .quick-ref {
+      background: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-top: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .quick-ref h2 { font-size: 18px; font-weight: 700; color: #0d1b2a; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th { background: #0071CE; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+    th:first-child { border-radius: 6px 0 0 0; }
+    th:last-child { border-radius: 0 6px 0 0; }
+    td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; color: #333; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fbff; }
+    td code {
+      font-family: 'SF Mono', monospace;
+      font-size: 12px;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .tag-support code { background: #fff8f0; color: #c45d00; }
+    .tag-auth code { background: #f0faf0; color: #2e7d32; }
+    .tag-vitality code { background: #eef5ff; color: #0071CE; }
+    .cat-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .cat-label.support { background: #fff3e0; color: #e65100; }
+    .cat-label.auth { background: #e8f5e9; color: #2e7d32; }
+    .cat-label.vitality { background: #e3f2fd; color: #0071CE; }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    footer span { color: #0071CE; font-weight: 600; }
+
+    @media (max-width: 600px) {
+      header { padding: 28px 20px 24px; }
+      .share-bar { padding: 12px 20px; }
+      main { padding: 28px 16px 60px; }
+      .grid { grid-template-columns: 1fr; }
+      .quick-ref { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Claude Skills — Geotab</h1>
+  <p>All 17 personal skills built for Geotab support, customer success, and platform operations. Each skill handles a specific workflow — invoke with a slash command in Claude Code.</p>
+  <div class="header-meta">
+    <div class="badge">🔍 4 Support &amp; Investigation</div>
+    <div class="badge">🔐 2 Auth &amp; Utilities</div>
+    <div class="badge">💙 11 Geotab Vitality CS</div>
+  </div>
+</header>
+
+<div class="share-bar">
+  <div class="share-bar-label">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0071CE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+    Share this page
+  </div>
+  <div class="share-link-box">
+    <span class="share-link-text" id="share-url">LIVE_URL</span>
+    <button class="copy-btn" id="copy-btn" onclick="copyLink()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      <span id="copy-label">Copy link</span>
+    </button>
+  </div>
+  <a class="open-btn" href="LIVE_URL" target="_blank" rel="noopener">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+    </svg>
+    Open page
+  </a>
+</div>
+
+<script>
+  function copyLink() {
+    const url = document.getElementById('share-url').textContent;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('copy-btn');
+      const label = document.getElementById('copy-label');
+      btn.classList.add('copied');
+      label.textContent = 'Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy link'; }, 2000);
+    });
+  }
+</script>
+
+<main>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- CATEGORY 1: SUPPORT & INVESTIGATION        -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="category cat-support">
+    <div class="category-header">
+      <div class="category-icon">🔍</div>
+      <div>
+        <div class="category-title">Support &amp; Investigation</div>
+      </div>
+      <div class="category-count">4 skills</div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Investigate Support Cases</div>
+          <div class="invoke">/investigate</div>
+        </div>
+        <div class="desc">End-to-end MyGeotab support case investigation. Routes automatically to the right branch — odometer, OEM, vehicle data, or HOS — based on the case details.</div>
+        <div class="when"><strong>When to use</strong>Odometer issues, IFTA mileage discrepancies, odometer drops, negative odometer, HOS violations, HOS ruleset questions, engine data issues, or protocol problems. Accepts SF case number, serial number, database URL, customer name, or vehicle make.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          /investigate 01721196<br>
+          /investigate G9RTRMN6VSMZ my.geotab.com/acmecorp<br>
+          /investigate Kenworth odometer drop
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Investigate OEM Devices</div>
+          <div class="invoke">/investigate-oem</div>
+        </div>
+        <div class="desc">Deep-dive 9-step OEM device troubleshooting — enrollment errors, data not flowing, activation failures, and data discrepancies for embedded OEM devices.</div>
+        <div class="when"><strong>When to use</strong>OEM device serial (prefix: DW, EB, E5, CO, FT, D8, DY, E1, JJ…) or a 17-char VIN. Use when general /investigate isn't enough for OEM-specific issues.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          /investigate-oem DW1234567890<br>
+          /investigate-oem 1HGBH41JXMN109186<br>
+          /investigate-oem 01721196
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Support AI Platform</div>
+          <div class="invoke">/support-ai</div>
+        </div>
+        <div class="desc">Launches the team-level skill browser — a Netflix-style UI to browse and launch support skills: Investigate, OEM Investigator, Support Agent, IT Support, Support Analytics, and Geotab KB.</div>
+        <div class="when"><strong>When to use</strong>When you want to browse all available support skills visually, or when onboarding team members to AI-assisted support workflows. Say "open support AI" or "support platform".</div>
+        <div class="example">
+          <div class="label">Example</div>
+          /support-ai<br>
+          "Open the support AI dashboard"<br>
+          "Launch support skill browser"
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Geotab Resource Fetcher</div>
+          <div class="invoke">/util-geotab-onesource</div>
+        </div>
+        <div class="desc">Fetches and searches Geotab resources asynchronously across 5 sources simultaneously: community forum, SDK API docs, Video Hub, MyGeotab API, and internal docs.</div>
+        <div class="when"><strong>When to use</strong>Looking up SDK methods, community forum answers, training videos, or internal documentation. Faster than searching each source manually.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Search Geotab resources for GO9 firmware update"<br>
+          "Find SDK docs for GetFeed method"<br>
+          "Look up community posts about odometer calibration"
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- CATEGORY 2: AUTH & UTILITIES               -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="category cat-auth">
+    <div class="category-header">
+      <div class="category-icon">🔐</div>
+      <div>
+        <div class="category-title">Auth &amp; Utilities</div>
+      </div>
+      <div class="category-count">2 skills</div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Unified Auth Manager</div>
+          <div class="invoke">/unified-auth-manager</div>
+        </div>
+        <div class="desc">Single CLI to manage encrypted credentials and live sessions for JIRA, MyGeotab, Google, and Salesforce APIs. Handles token refresh, session validation, and secure storage.</div>
+        <div class="when"><strong>When to use</strong>Setting up API access, checking auth status across tools, or managing tokens before running any multi-platform investigation. Say "uam", "unified auth", or "login to [platform]".</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Check my auth status"<br>
+          "Login to Jira and MyGeotab"<br>
+          "Manage my API tokens"<br>
+          /unified-auth-manager
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Support Workflow Agent</div>
+          <div class="invoke">/workflow-support-agent</div>
+        </div>
+        <div class="desc">Multi-agent support query system that routes questions across Salesforce cases, Jira ESUPSD tickets, Google Drive KB, and Google Chat discussions — returning synthesized answers from all sources.</div>
+        <div class="when"><strong>When to use</strong>Complex support questions that need cross-platform research. Automatically searches the right sources and synthesizes findings instead of checking each tool manually.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Find everything about this customer's issue across all our tools"<br>
+          "Search KB, Jira, and Salesforce for [topic]"<br>
+          /workflow-support-agent
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- CATEGORY 3: GEOTAB VITALITY CS             -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="category cat-vitality">
+    <div class="category-header">
+      <div class="category-icon">💙</div>
+      <div>
+        <div class="category-title">Geotab Vitality — Customer Success</div>
+      </div>
+      <div class="category-count">11 skills</div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Log Activity to CRM</div>
+          <div class="invoke">/vitality-log-crm</div>
+        </div>
+        <div class="desc">Converts rough post-call notes into a structured Salesforce-ready activity log. Handles batch mode for multiple calls at once.</div>
+        <div class="when"><strong>When to use</strong>After any customer call, onboarding session, check-in, or enrollment follow-up.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Log this call — spoke with Jane at Acme, device arrived,<br>privacy concern raised, next: send FAQ by Friday"
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Adapt Content Across Platforms</div>
+          <div class="invoke">/vitality-adapt</div>
+        </div>
+        <div class="desc">Takes one Vitality message and outputs Slack post + manager email + intranet article + slide talking points simultaneously — no rewriting.</div>
+        <div class="when"><strong>When to use</strong>When the same update needs to go to multiple channels at once.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "We hit 42% enrollment, up from 30%. Target 60% by June.<br>Adapt into Slack post, manager email, 3 slide talking points."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Analyze Patterns in Feedback</div>
+          <div class="invoke">/vitality-analyze-feedback</div>
+        </div>
+        <div class="desc">Extracts themes, sentiment, frequency counts, and quick-win recommendations from surveys, support emails, and Slack feedback — all sources at once.</div>
+        <div class="when"><strong>When to use</strong>After survey results land or when you have a batch of user feedback to process.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Here are 3 feedback sources from the past 60 days [paste].<br>Find top themes, sentiment breakdown, and 3 quick wins."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Generate Project Status Reports</div>
+          <div class="invoke">/vitality-status-report</div>
+        </div>
+        <div class="desc">Consolidates Slack, email, and tracker updates into a structured weekly status report — enrollment progress, cohort health, blockers flagged, executive summary.</div>
+        <div class="when"><strong>When to use</strong>Weekly or monthly reporting to leadership. Say "generate status report" or "weekly Vitality update".</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Here are updates from this week [paste Slack + email + tracker].<br>Generate status report with enrollment vs target and blockers."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Surface Themes from All Channels</div>
+          <div class="invoke">/vitality-surface-themes</div>
+        </div>
+        <div class="desc">Cross-references ALL feedback sources and surfaces only validated themes — those appearing in 2+ channels. Separates real signal from one-off noise.</div>
+        <div class="when"><strong>When to use</strong>Quarterly synthesis to confirm what's genuinely widespread across the program.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Synthesize Q1 feedback from surveys, Slack, and CS notes [paste].<br>Show only themes in 2+ sources, ranked by priority."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Source Insights to Build a Deck</div>
+          <div class="invoke">/vitality-build-deck</div>
+        </div>
+        <div class="desc">Synthesizes enrollment data, wins, feedback themes, and blockers into a slide-by-slide outline with talking points and a 2-paragraph executive narrative.</div>
+        <div class="when"><strong>When to use</strong>QBRs, stakeholder presentations, enrollment milestone decks.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Build a Q2 review deck [paste metrics, wins, blockers].<br>7 slides. Audience: leadership team."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Build a Daily Briefing</div>
+          <div class="invoke">/vitality-daily-brief</div>
+        </div>
+        <div class="desc">Builds a structured morning briefing from pasted Slack, email, and tracker updates — urgent items, at-risk customers, overdue follow-ups, and one strategic focus.</div>
+        <div class="when"><strong>When to use</strong>Start of every workday. Say "daily brief" or "what do I focus on today".</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Here are my Slack and emails from this morning [paste].<br>Build my daily briefing with urgent actions and at-risk customers."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Package Brand Guidelines</div>
+          <div class="invoke">/vitality-brand</div>
+        </div>
+        <div class="desc">Reviews content against Geotab Vitality brand standards and delivers an on-brand rewrite. Also generates a reusable brand SKILL.md for future sessions.</div>
+        <div class="when"><strong>When to use</strong>Before sending any customer or internal communication. Say "make this on-brand" or "review this email".</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Review this onboarding email [paste] for brand compliance.<br>Flag anything off-brand and deliver a corrected version."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Explore What Claude Can Do</div>
+          <div class="invoke">/vitality-explore</div>
+        </div>
+        <div class="desc">Maps your current tasks to Claude capabilities and returns 5 personalized, ready-to-run prompts with time-saved estimates. Ideal for onboarding new team members.</div>
+        <div class="when"><strong>When to use</strong>First session with a new team member, or when discovering underused capabilities.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "I'm a Vitality CS Coordinator. My day includes [describe tasks].<br>Show me 5 ways Claude saves me time with ready-to-use prompts."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Create a Process Flowchart</div>
+          <div class="invoke">/vitality-flowchart</div>
+        </div>
+        <div class="desc">Converts a written procedure or escalation path into an ASCII decision tree + Mermaid.js code block — embeddable in Confluence or Notion, with role labels and exception paths.</div>
+        <div class="when"><strong>When to use</strong>Documenting onboarding procedures, troubleshooting guides, or escalation paths.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Convert this onboarding SOP [paste] into a decision-tree flowchart<br>with owner labels (CS/Customer/IT) and Mermaid.js export."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Create a Company Newsletter</div>
+          <div class="invoke">/vitality-newsletter</div>
+        </div>
+        <div class="desc">Synthesizes enrollment milestones, wins, user spotlights, upcoming events, and FAQs into a polished 500-word internal newsletter — Geotab-branded, mobile-scannable.</div>
+        <div class="when"><strong>When to use</strong>Monthly program newsletter for internal stakeholders.</div>
+        <div class="example">
+          <div class="label">Example</div>
+          "Create the April Vitality newsletter [paste metrics, wins,<br>upcoming events, user spotlight, top 2 FAQs]."
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- QUICK REFERENCE TABLE                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="quick-ref">
+    <h2>Quick Reference — All 17 Skills</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Skill</th>
+          <th>Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="tag-support"><td>Investigate odometer, HOS, or vehicle data issues</td><td><code>/investigate</code></td><td><span class="cat-label support">Support</span></td></tr>
+        <tr class="tag-support"><td>Troubleshoot OEM embedded devices</td><td><code>/investigate-oem</code></td><td><span class="cat-label support">Support</span></td></tr>
+        <tr class="tag-support"><td>Browse all support skills visually</td><td><code>/support-ai</code></td><td><span class="cat-label support">Support</span></td></tr>
+        <tr class="tag-support"><td>Search Geotab docs, SDK, community, Video Hub</td><td><code>/util-geotab-onesource</code></td><td><span class="cat-label support">Support</span></td></tr>
+        <tr class="tag-auth"><td>Manage API tokens and sessions across tools</td><td><code>/unified-auth-manager</code></td><td><span class="cat-label auth">Auth</span></td></tr>
+        <tr class="tag-auth"><td>Cross-platform support query (SF + Jira + KB + Chat)</td><td><code>/workflow-support-agent</code></td><td><span class="cat-label auth">Auth</span></td></tr>
+        <tr class="tag-vitality"><td>Log a customer call to Salesforce</td><td><code>/vitality-log-crm</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Repurpose one message to Slack, email, slides</td><td><code>/vitality-adapt</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Extract themes from survey and feedback data</td><td><code>/vitality-analyze-feedback</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Weekly program status report for leadership</td><td><code>/vitality-status-report</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Confirm which issues are validated across channels</td><td><code>/vitality-surface-themes</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Build a QBR or stakeholder deck from raw data</td><td><code>/vitality-build-deck</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Morning briefing from Slack, email, tracker</td><td><code>/vitality-daily-brief</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Review content for Vitality brand compliance</td><td><code>/vitality-brand</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Onboard a new team member to AI workflows</td><td><code>/vitality-explore</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Turn a playbook into a visual decision flowchart</td><td><code>/vitality-flowchart</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+        <tr class="tag-vitality"><td>Write the monthly internal newsletter</td><td><code>/vitality-newsletter</code></td><td><span class="cat-label vitality">Vitality</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  17 personal Claude skills · Geotab · Built with Claude Code · <span>March 2026</span>
+</footer>
+
+</body>
+</html>
